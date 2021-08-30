@@ -29,7 +29,7 @@ const handler = async (req, res) => {
         const run = req.query.run
         const tank = req.query.tank
 
-        const python = spawn('python', [visionScriptPath, run, tank, file_name, file_path]) //REPLACE run WITH FULL IMAGE 
+        const python = spawn('python', [visionScriptPath, run, tank, file_name, file_path]) 
         var pcv_reading;
         python.stdout.on('data', (data) => {
           pcv_reading = data.toString()
@@ -37,9 +37,12 @@ const handler = async (req, res) => {
         })
         python.stderr.on('data', (data) => {
           console.error(`stderr: ${data}`)
+          res.status(500).json({message: "internal script failure"})
+          return resolve()
         })
         python.on('close', (code) => {
           console.log(`closing with status code: ${code}`)
+          //use Filter() from create-entry.ts
           /*
           const results = await query(`
             SELECT id, title, content
