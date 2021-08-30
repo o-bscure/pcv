@@ -3,6 +3,9 @@ import formidable from 'formidable'
 import { type } from 'os'
 const { spawn } =  require('child_process')
 
+import Filter from 'bad-words'
+const filter = new Filter()
+
 const path = require('path')
 const visionScriptPath = path.join(process.cwd(), '/scripts/middle.py')
 
@@ -38,22 +41,24 @@ const handler = async (req, res) => {
         python.stderr.on('data', (data) => {
           console.error(`stderr: ${data}`)
         })
-        python.on('close', (code) => {
+        python.on('close', async (code) => {
           console.log(`closing with status code: ${code}`)
           if (code != 0) {
             res.status(500).json({message: "Internal script error"})
           } else {
-            //use Filter() from create-entry.ts
-            /*
             const results = await query(`
-              SELECT id, title, content
-              FROM entries
-              WHERE id = ?
+              INSERT INTO entry (run, tank, pcv_value, path)
+              VALUES (?, ?, ?, ?)
             `,
-              id
+              [filter.clean(run), filter.clean(tank), pcv_reading, filter.clean(file_path)]
             )
-            */
-            res.status(200).json({message: "The file has been uploaded, analyzed, and saved"})
+            .then((response) => {
+              res.status(200).json({message: "The file has been uploaded, analyzed, and saved"})
+            })
+            .catch((e) => {
+              console.error(e.message)
+              res.status(500).json({message: "Database upload error"})
+            })
           }
             return resolve()
         })
