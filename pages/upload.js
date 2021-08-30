@@ -76,22 +76,22 @@ export default class Upload extends React.Component {
         }))
     }
 
-    handleSubmit(event) { //TODO: all submits must have valid tank and img, disable submit button otherwise
+    async handleSubmit(event) { 
         event.preventDefault()
         const file_keys = Object.keys(this.state.files)
         for (let i=0; i<file_keys.length; i++) {
             var formData = new FormData();
             let current_file = this.state.files[file_keys[i]];
-            formData.append("file", current_file.img, )
-            formData.append("fileName", current_file.img.name)
-           
-                axios({
-                    method: 'post',
-                    url: `/api/upload/${this.state.run}/${current_file.tank}`,
-                    timeout: 5000,
-                    data: formData,
-                })
-                .then(this.setState(prevState => ({
+            formData.append("file", current_file.img)
+
+            await axios({
+                method: 'post',
+                url: `/api/upload/${this.state.run}/${current_file.tank}`,
+                timeout: 5000,
+                data: formData,
+            })
+            .then((response) => {
+                this.setState(prevState => ({
                         ...prevState,
                         files: {
                             ...prevState.files,
@@ -101,11 +101,11 @@ export default class Upload extends React.Component {
                             }
                         }
                     }))
-                )
-                .catch(e => {
-                    console.error("timeout exceeded")
-                })
-            
+            })
+            .catch(e => {
+                console.error(e.message)
+            })
+
                 //api middleware 1. saves file locally 2. runs imaging script 3. saves data in mysql
             //set state of filekey to getResults = true
             //gets data from database api in render
@@ -121,10 +121,10 @@ export default class Upload extends React.Component {
                 return (hasTank || (typeof this.state.files[fileKey].tank == "undefined"))
             }, false)
         )) {
-            var submitButton=<button onClick={(e) => this.handleSubmit(e)} disabled className="flex flex-initial place-self-center bg-gray-100 m-3 p-6 rounded-t-md 
-                        border-4 border-red-500 hover:ring hover:ring-gray-300 active:bg-indigo-300">Submit</button>
+            var submitButton=<button onClick={(e) => this.handleSubmit(e)} disabled className="flex flex-initial place-self-center bg-gray-400 m-3 p-6 rounded-t-md 
+                        border-4 border-red-500 cursor-not-allowed hover:ring hover:ring-gray-300 active:bg-indigo-300">Submit</button>
         } else {
-            var submitButton=<button onClick={(e) => this.handleSubmit(e)} className="flex flex-initial place-self-center bg-gray-100 m-3 p-6 rounded-t-md 
+            var submitButton=<button onClick={(e) => this.handleSubmit(e)} className="flex flex-initial place-self-center bg-gray-400 m-3 p-6 rounded-t-md 
                         border-4 border-green-500 hover:ring hover:ring-gray-300 active:bg-indigo-300">Submit</button>
         }
 
@@ -178,7 +178,7 @@ export default class Upload extends React.Component {
                             className="flex flex-initial w-20 bg-gray-200 border-2 border-gray-700 rounded-lg focus:outline-none"/>
                     </div>
                     <div className="flex flex-col flex-grow gap-y-5 ">{tankrows}</div>
-                    <button onClick={(e) => this.setTankNumbers(e)} className="flex flex-initial place-self-center bg-gray-100 m-3 p-6 rounded-t-md 
+                    <button onClick={(e) => this.setTankNumbers(e)} className="flex flex-initial place-self-center bg-gray-400 m-3 p-6 rounded-t-md 
                         active:bg-red-600 focus:outline-none">Auto</button>
                 </div>
 
@@ -191,6 +191,8 @@ export default class Upload extends React.Component {
                 <div className="flex flex-col flex-nowrap gap-y-5">
                     <label className="flex flex-inital m-5 mt-8 place-self-center text-2xl">Results</label>
                     <div className="flex flex-col flex-grow gap-y-5 ">{resultrows}</div>
+                    <Link href="/"><div className="flex flex-initial place-self-center bg-gray-400 m-3 p-6 rounded-t-md cursor-pointer
+                        active:bg-red-600 focus:outline-none">Back</div></Link>
                 </div>
             </form>
           </div>
