@@ -42,8 +42,10 @@ async function migrate() {
         DEFAULT CURRENT_TIMESTAMP 
         ON UPDATE CURRENT_TIMESTAMP
     )
-    `)
-    console.log('migration ran successfully')
+    `).then((response) => {
+      console.log(response)
+    })
+      
   } catch (e) {
     console.error('could not run migration, double check your credentials.')
     process.exit(1)

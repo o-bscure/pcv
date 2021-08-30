@@ -48,9 +48,8 @@ const handler = async (req, res) => {
           } else {
             const results = await query(`
               INSERT INTO entry (run, tank, pcv_value, path)
-              VALUES (?, ?, ?, ?)
-            `,
-              [filter.clean(run), filter.clean(tank), pcv_reading, filter.clean(file_path)]
+              VALUES ('pe', 5, 1.11, 'yo')
+            `
             )
             .then((response) => {
               res.status(200).json({message: "The file has been uploaded, analyzed, and saved"})
