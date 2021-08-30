@@ -32,28 +32,30 @@ const handler = async (req, res) => {
         const python = spawn('python', [visionScriptPath, run, tank, file_name, file_path]) 
         var pcv_reading;
         python.stdout.on('data', (data) => {
-          pcv_reading = data.toString()
+          pcv_reading = Number(data.toString())
           console.log(`pcv read as: ${pcv_reading}`)
         })
         python.stderr.on('data', (data) => {
           console.error(`stderr: ${data}`)
-          res.status(500).json({message: "internal script failure"})
-          return resolve()
         })
         python.on('close', (code) => {
           console.log(`closing with status code: ${code}`)
-          //use Filter() from create-entry.ts
-          /*
-          const results = await query(`
-            SELECT id, title, content
-            FROM entries
-            WHERE id = ?
-          `,
-            id
-          )
-          */
-          res.status(200).json({message: "The file has been uploaded, analyzed, and saved"})
-          return resolve()
+          if (code != 0) {
+            res.status(500).json({message: "Internal script error"})
+          } else {
+            //use Filter() from create-entry.ts
+            /*
+            const results = await query(`
+              SELECT id, title, content
+              FROM entries
+              WHERE id = ?
+            `,
+              id
+            )
+            */
+            res.status(200).json({message: "The file has been uploaded, analyzed, and saved"})
+          }
+            return resolve()
         })
 
       } catch (e) {
