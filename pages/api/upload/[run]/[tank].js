@@ -24,7 +24,7 @@ const handler = async (req, res) => {
     })
   
     form.parse(req, (err, fields, files) => {
-      console.log(err, fields, files)
+      //console.log(err, fields, files) //file object being uploaded
       try {
         const file_name = files.file.name
         const file_type = files.file.type
@@ -47,10 +47,11 @@ const handler = async (req, res) => {
             res.status(500).json({message: "Internal script error"})
           } else {
             const results = await query(`
-              INSERT INTO entry (run, tank, pcv_value, path)
-              VALUES ('pe', 5, 1.11, 'yo')
-            `
-            )
+              INSERT INTO entries (run, tank, pcv_value, path)
+              VALUES (?, ?, ?, ?)
+            `,
+            [filter.clean(run), tank, pcv_reading, file_path]
+            ) 
             .then((response) => {
               res.status(200).json({message: "The file has been uploaded, analyzed, and saved"})
             })

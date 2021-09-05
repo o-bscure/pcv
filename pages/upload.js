@@ -2,7 +2,12 @@ import React from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import axios from 'axios'
+import useSWR from 'swr'
 import { find_bad_tanks } from '../lib/badTanks.js'
+
+function fetcher(url) {
+    return window.fetch(url).then((res) => res.json())
+}
 
 export default class Upload extends React.Component {
     constructor(props) {
@@ -84,31 +89,50 @@ export default class Upload extends React.Component {
             let current_file = this.state.files[file_keys[i]];
             formData.append("file", current_file.img)
 
-            await axios({
+            this.setState(prevState => ({
+                ...prevState,
+                files: {
+                    ...prevState.files,
+                    [file_keys[i]]: { 
+                        ...prevState.files[file_keys[i]],
+                        pcv: 'loading...',
+                    }
+                }
+            }))
+
+            //const { data, error } = useSWR(`/api/view/${this.state.run}/${this.state.files[file_keys[i]].tank}`, fetcher)
+            axios({
                 method: 'post',
                 url: `/api/upload/${this.state.run}/${current_file.tank}`,
                 timeout: 5000,
                 data: formData,
             })
             .then((response) => {
-                this.setState(prevState => ({
-                        ...prevState,
-                        files: {
-                            ...prevState.files,
-                            [file_keys[i]]: { 
-                                ...prevState.files[file_keys[i]],
-                                getResults: true,
+                axios({
+                    method: 'get',
+                    url: `/api/view/${this.state.run}/${current_file.tank}`,
+                    timeout: 5000,
+                })
+                .then((r) => {
+                    console.log(r)
+                    this.setState(prevState => ({
+                            ...prevState,
+                            files: {
+                                ...prevState.files,
+                                [file_keys[i]]: { 
+                                    ...prevState.files[file_keys[i]],
+                                    pcv: r.data.rows[r.data.rows.length-1].pcv_value,
+                                }
                             }
-                        }
-                    }))
+                        }))
+                    })
+                .catch((e) => {
+                    console.error(e.message)
+                })
             })
             .catch(e => {
                 console.error(e.message)
             })
-
-                //api middleware 1. saves file locally 2. runs imaging script 3. saves data in mysql
-            //set state of filekey to getResults = true
-            //gets data from database api in render
         }
     }
 
@@ -151,17 +175,10 @@ export default class Upload extends React.Component {
 
         var resultrows = []
         for (let i=0; i<file_keys.length; i++) {
-            if (this.state.files[file_keys[i]].getResults == true) {
-                //SWR for the given run&tank pcv reader result. here -> api -> mysql
-                /*
-                { data, error } useSWR('/api/???', fetcher)
-                if (error) resultrows.push(<div>failed</div>)
-                else if (!data) resultrows.push(<div>loading...</div>)
-                else resultrows.push(<div>{data}</div>)
-                */
-                resultrows.push(<p key={i} className="flex flex-initial place-self-center h-10 ">chang</p>)
+            if (typeof this.state.files[file_keys[i]].pcv != 'undefined') {
+                resultrows.push(<p key={i} className="flex flex-initial place-self-center h-10 ">{this.state.files[file_keys[i]].pcv}</p>)
             } else {
-                resultrows.push(<p key={i} className="flex flex-initial place-self-center h-10 ">n/a</p>)
+                resultrows.push(<p key={i} className="flex flex-initial place-self-center h-10 ">X</p>)
             }
         }
 
