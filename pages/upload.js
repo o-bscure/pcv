@@ -4,10 +4,7 @@ import Head from 'next/head'
 import axios from 'axios'
 import useSWR from 'swr'
 import { find_bad_tanks } from '../lib/badTanks.js'
-
-function fetcher(url) {
-    return window.fetch(url).then((res) => res.json())
-}
+//TODO: SAM&PE regex for run entry and submit permission
 
 export default class Upload extends React.Component {
     constructor(props) {
@@ -160,7 +157,7 @@ export default class Upload extends React.Component {
         var tankrows = []
         for (let i=0; i<file_keys.length; i++) {
             var box_type = "flex flex-initial place-self-center w-10 h-7 bg-gray-200 border-2 rounded-md focus:outline-none ";
-            if (typeof this.state.files[i].tank != "undefined" && this.state.bad_tanks.includes(this.state.files[i].tank)) {
+            if (typeof this.state.files[i].tank == "undefined" || this.state.bad_tanks.includes(this.state.files[i].tank)) {
                 box_type = box_type.concat("border-red-600")
             } else {
                 box_type = box_type.concat("border-gray-100")
@@ -190,7 +187,7 @@ export default class Upload extends React.Component {
             <form className="grid grid-cols-3 w-full h-full">
                 <div className="flex flex-col flex-nowrap gap-y-5">
                     <div className="flex flex-rows-1 place-content-center m-5 mt-8">
-                        <label className="flex flex-inital text-2xl pr-4">Enter Run</label>
+                        <label className="flex flex-inital text-2xl pr-4 font-semibold">Enter Run</label>
                         <input type="text" id="run" value={this.state.run} onChange={(e) => this.handleRunSelect(e)} 
                             className="flex flex-initial w-20 bg-gray-200 border-2 border-gray-700 rounded-lg focus:outline-none"/>
                     </div>
@@ -200,13 +197,13 @@ export default class Upload extends React.Component {
                 </div>
 
                 <div className="flex flex-col flex-nowrap gap-y-5">
-                    <label className="flex flex-inital m-5 mt-8 place-self-center text-2xl">Select PCV image</label>
+                    <label className="flex flex-inital m-5 mt-8 place-self-center text-2xl font-semibold">Select PCV image</label>
                     <div className="flex flex-col flex-grow gap-y-5 ">{filerows}</div>
                     {submitButton}
                 </div>
 
                 <div className="flex flex-col flex-nowrap gap-y-5">
-                    <label className="flex flex-inital m-5 mt-8 place-self-center text-2xl">Results</label>
+                    <label className="flex flex-inital m-5 mt-8 place-self-center text-2xl font-semibold">Results</label>
                     <div className="flex flex-col flex-grow gap-y-5 ">{resultrows}</div>
                     <Link href="/"><div className="flex flex-initial place-self-center bg-gray-400 m-3 p-6 rounded-t-md cursor-pointer
                         active:bg-red-600 focus:outline-none">Back</div></Link>

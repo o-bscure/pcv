@@ -13,7 +13,7 @@ const handler = async (req, res) => {
         const tank = req.query.tank
 
         const [rows, fields] = await query(`
-                SELECT id, tank, pcv_value
+                SELECT id, tank, pcv_value, created_at
                 FROM entries
                 WHERE run = ?
                 AND tank = ?
