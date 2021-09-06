@@ -223,7 +223,7 @@ export default class Upload extends React.Component {
                     <div className="flex flex-col-1 flex-wrap place-content-center">
                         <label className="flex flex-initial place-items-center place-content-center p-1 w-full">Run</label>
                         <input type="text" value={this.state.tanks[tank_keys[i]].run} onChange={(e) => this.handleRunSelect(e, i)} className={box_type_run}/>
-                        <div className="flex p-1 place-items-center place-content-center w-full bg-gray-200">
+                        <div className="flex p-1 place-items-center place-content-center w-full ">
                             <button onClick={(e) => this.setRunGlobal(e, this.state.tanks[tank_keys[i]].run)} className="bg-gray-400 pl-2 pr-2 text-l">Set All</button>
                         </div>
                     </div>
