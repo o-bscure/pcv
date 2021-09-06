@@ -264,7 +264,7 @@ export default class Upload extends React.Component {
                 }
                 resultrows.push(<div key={i} className="flex flex-col flex-wrap w-full place-self-center ">{results}</div>)
             } else {
-                resultrows.push(<p key={i} className="flex flex-initial place-self-center h-10 ">X</p>)
+                resultrows.push(<p key={i} className="flex flex-initial place-self-center place-items-center h-20 mt-3 ">X</p>)
             }
         }
 
@@ -272,7 +272,7 @@ export default class Upload extends React.Component {
           <div className="grid grid-cols-1 w-screen h-screen bg-gray-200">
             <div className="flex flex-grow">
             <form className="grid grid-cols-2 w-full h-full">
-                <div className="flex flex-col flex-nowrap gap-y-4">
+                <div className="flex flex-col flex-nowrap gap-y-1">
                     <div className="flex flex-rows-1 place-content-center m-5 mt-8">
                         <label className="flex flex-inital text-3xl font-semibold pr-4">Tanks</label>
                     </div>
@@ -284,7 +284,7 @@ export default class Upload extends React.Component {
                     <div className="flex flex-col flex-grow gap-y-3 ">{tankrows}</div>
                 </div>
 
-                <div className="flex flex-col flex-nowrap gap-y-4">
+                <div className="flex flex-col flex-nowrap gap-y-1">
                     <label className="flex flex-inital m-5 mt-8 place-self-center text-3xl font-semibold">Results</label>
                     <div className="flex w-full place-content-evenly"><div className="text-xl">Time</div><div className="text-xl">PCV</div></div>
                     <div className="flex flex-col flex-grow gap-y-3 ">{resultrows}</div>
@@ -293,7 +293,7 @@ export default class Upload extends React.Component {
             </div>
 
             <div className="flex flex-shrink flex-col-1 place-content-center self-end h-20">
-                <div className="flex flex-row-1 place-content-evenly w-full">
+                <div className="flex flex-row-1 place-content-around w-full">
                     <button onClick={(e) => this.setTankNumbers(e)} className="flex flex-shrink place-self-center bg-gray-400 m-3 p-6 rounded-t-md 
                         active:bg-red-600 focus:outline-none">Auto</button>
                     {submitButton}
