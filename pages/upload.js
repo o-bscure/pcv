@@ -4,7 +4,7 @@ import Head from 'next/head'
 import axios from 'axios'
 import useSWR from 'swr'
 import { find_bad_tanks } from '../lib/badTanks.js'
-//TODO: SAM&PE regex for run entry and submit permission
+//TODO: strip trailing whitepsace from run entry
 
 export default class Upload extends React.Component {
     constructor(props) {
@@ -142,11 +142,11 @@ export default class Upload extends React.Component {
                 return (hasTank || (typeof this.state.files[fileKey].tank == "undefined"))
             }, false)
         )) {
-            var submitButton=<button onClick={(e) => this.handleSubmit(e)} disabled className="flex flex-initial place-self-center bg-gray-400 m-3 p-6 rounded-t-md 
-                        border-4 border-red-500 cursor-not-allowed hover:ring hover:ring-gray-300 active:bg-indigo-300">Submit</button>
+            var submitButton=<button onClick={(e) => this.handleSubmit(e)} disabled className="flex flex-initial place-self-center bg-gray-600 m-0 p-6 rounded-t-md 
+                        border-4 border-red-600 cursor-not-allowed font-medium hover:ring hover:ring-gray-300 active:bg-indigo-300">Submit</button>
         } else {
-            var submitButton=<button onClick={(e) => this.handleSubmit(e)} className="flex flex-initial place-self-center bg-gray-400 m-3 p-6 rounded-t-md 
-                        border-4 border-green-500 hover:ring hover:ring-gray-300 active:bg-indigo-300">Submit</button>
+            var submitButton=<button onClick={(e) => this.handleSubmit(e)} className="flex flex-initial place-self-center bg-gray-600 m-0 p-6 rounded-t-md 
+                        border-4 border-green-600 font-medium hover:ring hover:ring-gray-300 active:bg-indigo-300">Submit</button>
         }
 
         var filerows = [];
@@ -156,7 +156,7 @@ export default class Upload extends React.Component {
 
         var tankrows = []
         for (let i=0; i<file_keys.length; i++) {
-            var box_type = "flex flex-initial place-self-center w-10 h-7 bg-gray-200 border-2 rounded-md focus:outline-none ";
+            var box_type = "flex flex-initial place-self-center w-10 h-7 bg-gray-400 border-2 rounded-md focus:outline-none ";
             if (typeof this.state.files[i].tank == "undefined" || this.state.bad_tanks.includes(this.state.files[i].tank)) {
                 box_type = box_type.concat("border-red-600")
             } else {
@@ -164,7 +164,7 @@ export default class Upload extends React.Component {
             }
             tankrows.push(
                 <div key={i} className="flex flex-rows-1 h-10 place-content-center">
-                    <label className="flex flex-initial place-items-center">Tank No. </label>
+                    <label className="flex flex-initial place-items-center mr-1">Tank No. </label>
                     <input type="number" value={this.state.files[i].tank} onChange={(e) => this.handleTankSelect(e, i)} className={box_type}/>
                 </div>
             )
@@ -183,17 +183,17 @@ export default class Upload extends React.Component {
         /* console.log(imgs) */
 
         return (
-          <div className="grid grid-cols-1 w-screen h-screen bg-gray-200">
+          <div className="grid grid-cols-1 w-screen h-screen bg-gray-400">
             <form className="grid grid-cols-3 w-full h-full">
                 <div className="flex flex-col flex-nowrap gap-y-5">
                     <div className="flex flex-rows-1 place-content-center m-5 mt-8">
                         <label className="flex flex-inital text-2xl pr-4 font-semibold">Enter Run</label>
                         <input type="text" id="run" value={this.state.run} onChange={(e) => this.handleRunSelect(e)} 
-                            className="flex flex-initial w-20 bg-gray-200 border-2 border-gray-700 rounded-lg focus:outline-none"/>
+                            className="flex flex-initial w-20 bg-gray-400 border-2 border-gray-700 rounded-lg focus:outline-none"/>
                     </div>
                     <div className="flex flex-col flex-grow gap-y-5 ">{tankrows}</div>
-                    <button onClick={(e) => this.setTankNumbers(e)} className="flex flex-initial place-self-center bg-gray-400 m-3 p-6 rounded-t-md 
-                        active:bg-red-600 focus:outline-none">Auto</button>
+                    <button onClick={(e) => this.setTankNumbers(e)} className="flex flex-initial place-self-center bg-gray-600 m-0 p-6 rounded-t-md 
+                        border-2 border-gray-200 font-medium active:bg-red-600 focus:outline-none">Auto</button>
                 </div>
 
                 <div className="flex flex-col flex-nowrap gap-y-5">
@@ -205,8 +205,8 @@ export default class Upload extends React.Component {
                 <div className="flex flex-col flex-nowrap gap-y-5">
                     <label className="flex flex-inital m-5 mt-8 place-self-center text-2xl font-semibold">Results</label>
                     <div className="flex flex-col flex-grow gap-y-5 ">{resultrows}</div>
-                    <Link href="/"><div className="flex flex-initial place-self-center bg-gray-400 m-3 p-6 rounded-t-md cursor-pointer
-                        active:bg-red-600 focus:outline-none">Back</div></Link>
+                    <Link href="/"><div className="flex flex-shrink place-self-center bg-gray-600 m-0 p-6 rounded-t-md cursor-pointer
+                        border-2 border-gray-200 font-medium active:bg-red-600 focus:outline-none">Back</div></Link>
                 </div>
             </form>
           </div>
